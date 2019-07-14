@@ -2,13 +2,13 @@ from django.db import models
 
 
 # Create your models here.
-
 class Genre(models.Model):
-    name= models.CharField(max_length=200, help_text=Enter a book genre)
+    """Model representing a book genre."""
+    name = models.CharField(max_length=200, help_text='Enter a book genre (e.g. Science Fiction)')
+    
     def __str__(self):
+        """String for representing the Model object."""
         return self.name
-
- #Class book model
 
 from django.urls import reverse # Used to generate URLs by reversing the URL patterns
 
@@ -34,8 +34,11 @@ class Book(models.Model):
     def get_absolute_url(self):
         """Returns the url to access a detail record for this book."""
         return reverse('book-detail', args=[str(self.id)])
-
-
+    def display_genre(self):
+        """Create a string for the Genre. This is required to display genre in Admin."""
+        return ', '.join(genre.name for genre in self.genre.all()[:3])
+    
+    display_genre.short_description = 'Genre'
 import uuid # Required for unique book instances
 
 class BookInstance(models.Model):
@@ -67,8 +70,7 @@ class BookInstance(models.Model):
         """String for representing the Model object."""
         return f'{self.id} ({self.book.title})'
 
-
-    class Author(models.Model):
+class Author(models.Model):
     """Model representing an author."""
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
